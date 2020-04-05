@@ -83,7 +83,7 @@ static INT8 decode_as_ac(char *file_name)
     ac_status.ac_power = AC_POWER_OFF;
     ac_status.ac_mode = AC_MODE_COOL;
     ac_status.ac_temp = AC_TEMP_20;
-    ac_status.ac_wind_dir = AC_SWING_ON;
+    ac_status.ac_swing = AC_SWING_ON;
     ac_status.ac_wind_speed = AC_WS_AUTO;
 
     if (IR_DECODE_FAILED == ir_file_open(REMOTE_CATEGORY_AC, 0, file_name))
@@ -165,7 +165,7 @@ static INT8 decode_as_ac(char *file_name)
             switch (key_code)
             {
                 case 0:
-                    ac_status.ac_power = ((ac_status.ac_wind_dir == AC_POWER_ON) ? AC_POWER_OFF : AC_POWER_ON);
+                    ac_status.ac_power = ((ac_status.ac_swing == AC_POWER_ON) ? AC_POWER_OFF : AC_POWER_ON);
                     need_control = TRUE;
                     break;
 
@@ -194,12 +194,12 @@ static INT8 decode_as_ac(char *file_name)
                     break;
 
                 case 10:
-                    ac_status.ac_wind_dir = ((ac_status.ac_wind_dir == AC_SWING_ON) ? AC_SWING_OFF : AC_SWING_ON);
+                    ac_status.ac_swing = ((ac_status.ac_swing == AC_SWING_ON) ? AC_SWING_OFF : AC_SWING_ON);
                     need_control = TRUE;
                     break;
 
                 case 11:
-                    if (ac_status.ac_wind_dir == AC_SWING_OFF) {
+                    if (ac_status.ac_swing == AC_SWING_OFF) {
                         change_wind_dir = TRUE;
                     }
                     need_control = TRUE;
@@ -217,7 +217,7 @@ static INT8 decode_as_ac(char *file_name)
                        ac_status.ac_mode,
                        ac_status.ac_temp,
                        ac_status.ac_wind_speed,
-                       ac_status.ac_wind_dir,
+                       ac_status.ac_swing,
                        function_code);
 
                 length = ir_decode(function_code, user_data, &ac_status, change_wind_dir);

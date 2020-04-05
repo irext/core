@@ -375,7 +375,7 @@ typedef struct REMOTE_AC_STATUS
     t_ac_power ac_power;
     t_ac_temperature ac_temp;
     t_ac_mode ac_mode;
-    t_ac_swing ac_wind_dir;
+    t_ac_swing ac_swing;
     t_ac_wind_speed ac_wind_speed;
     UINT8 ac_display;
     UINT8 ac_sleep;

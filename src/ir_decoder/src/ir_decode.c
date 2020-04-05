@@ -251,10 +251,10 @@ UINT16 ir_decode(UINT8 key_code, UINT16* user_data,
             return 0;
         }
         ir_printf("ac status is not null in decode core : power = %d, mode = %d, "
-                  "temp = %d, wind_dir = %d, wind_speed = %d, "
+                  "temp = %d, swing = %d, wind_speed = %d, "
                   "key_code = %d, change_wind_direction = %d\n",
                   ac_status->ac_power, ac_status->ac_mode,
-                  ac_status->ac_temp, ac_status->ac_wind_dir,
+                  ac_status->ac_temp, ac_status->ac_swing,
                   ac_status->ac_wind_speed,
                   key_code, change_wind_direction);
         return ir_ac_control(*ac_status, user_data, key_code, change_wind_direction);
