@@ -1,5 +1,5 @@
 /**************************************************************************************
-Filename:       ir_parse_ac_parameter.h
+Filename:       ir_ac_parse_parameter.h
 Revised:        Date: 2016-10-12
 Revision:       Revision: 1.0
 

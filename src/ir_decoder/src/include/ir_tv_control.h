@@ -1,5 +1,5 @@
 /**************************************************************************************
-Filename:       ir_lib.h
+Filename:       ir_tv_control.h
 Revised:        Date: 2016-02-23
 Revision:       Revision: 1.0
 

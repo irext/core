@@ -1,5 +1,5 @@
 /**************************************************************************************
-Filename:       ir_parse_frame_parameter.c
+Filename:       ir_ac_parse_frame_info.c
 Revised:        Date: 2016-10-11
 Revision:       Revision: 1.0
 
