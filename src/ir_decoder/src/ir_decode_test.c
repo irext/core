@@ -12,7 +12,6 @@ Revision log:
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
 #include <ctype.h>
-#include <libgen.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -295,7 +294,7 @@ int main(int argc, char *argv[])
 
     if (4 != argc)
     {
-        print_usage(basename(argv[0]));
+        print_usage((argv[0]));
         return -1;
     }
 
