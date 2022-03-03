@@ -317,6 +317,4 @@ int main(int argc, char *argv[])
             printf("Decode functionality not supported : %c\n", function);
             break;
     }
-
-
 }
