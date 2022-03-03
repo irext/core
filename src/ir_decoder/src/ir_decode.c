@@ -139,13 +139,13 @@ INT8 ir_file_open(const UINT8 category, const UINT8 sub_category, const char* fi
     else
     {
         ir_binary_type = IR_TYPE_COMMANDS;
-        if (1 == sub_category)
+        if (SUB_CATEGORY_QUATERNARY == sub_category)
         {
-            ir_hexadecimal = SUB_CATEGORY_QUATERNARY;
+            ir_hexadecimal = 0;
         }
-        else if (2 == sub_category)
+        else if (SUB_CATEGORY_HEXADECIMAL == sub_category)
         {
-            ir_hexadecimal = SUB_CATEGORY_HEXADECIMAL;
+            ir_hexadecimal = 1;
         }
         else
         {
@@ -205,13 +205,13 @@ INT8 ir_binary_open(const UINT8 category, const UINT8 sub_category, UINT8* binar
     else
     {
         ir_binary_type = IR_TYPE_COMMANDS;
-        if (1 == sub_category)
+        if (SUB_CATEGORY_QUATERNARY == sub_category)
         {
-            ir_hexadecimal = SUB_CATEGORY_QUATERNARY;
+            ir_hexadecimal = 0;
         }
-        else if (2 == sub_category)
+        else if (SUB_CATEGORY_HEXADECIMAL == sub_category)
         {
-            ir_hexadecimal = SUB_CATEGORY_HEXADECIMAL;
+            ir_hexadecimal = 1;
         }
         else
         {
