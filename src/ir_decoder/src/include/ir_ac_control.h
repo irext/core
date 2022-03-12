@@ -126,30 +126,30 @@ typedef enum
     AC_APPLY_MAX
 } t_ac_apply;
 
-typedef struct _ac_hex
+typedef struct ac_hex
 {
     UINT8 len;
     UINT8 *data;
 } t_ac_hex;
 
-typedef struct _ac_level
+typedef struct ac_level
 {
     UINT16 low;
     UINT16 high;
 } t_ac_level;
 
-typedef struct _ac_bootcode
+typedef struct ac_bootcode
 {
     UINT16 len;
     UINT16 data[16];
-} t_ac_bootcode;
+} t_ac_boot_code;
 
-typedef struct _ac_delaycode
+typedef struct ac_delay_code
 {
     INT16 pos;
     UINT16 time[8];
     UINT16 time_cnt;
-} t_ac_delaycode;
+} t_ac_delay_code;
 
 /*
  * the array of tag_100X application data
@@ -157,26 +157,26 @@ typedef struct _ac_delaycode
  * byte_pos : the position of update byte
  * byte_value : the value to be updated to position
  */
-typedef struct _tag_comp_type_1
+typedef struct tag_comp_type_1
 {
     UINT8 seg_len;
     UINT8 *segment;
 } t_tag_comp;
 
-typedef struct _tag_swing_info
+typedef struct tag_swing_info
 {
     swing_type type;
     UINT8 mode_count;
     UINT8 dir_index;
 } t_swing_info;
 
-typedef struct _tag_power_1
+typedef struct tag_power_1
 {
     UINT8 len;
     t_tag_comp comp_data[AC_POWER_MAX];
 } t_power_1;
 
-typedef struct _tag_temp_1
+typedef struct tag_temp_1
 {
     UINT8 len;
     UINT8 type;
@@ -236,7 +236,7 @@ typedef struct tag_horiswing_1
 } hori_swing_1;
 #endif
 
-typedef struct _tag_checksum_data
+typedef struct tag_checksum_data
 {
     UINT8 len;
     UINT8 type;
@@ -273,7 +273,7 @@ typedef struct tag_solo_code
     UINT8 solo_function_codes[AC_FUNCTION_MAX - 1];
 } t_solo_code;
 
-typedef struct _ac_bitnum
+typedef struct ac_bitnum
 {
     INT16 pos;
     UINT16 bits;
@@ -302,7 +302,7 @@ typedef enum
     CHECKSUM_TYPE_MAX,
 } t_checksum_type;
 
-typedef struct _ac_n_mode_info
+typedef struct ac_n_mode_info
 {
     UINT8 enable;
     UINT8 all_speed;
@@ -320,8 +320,8 @@ typedef struct ac_protocol
     t_ac_hex default_code;
     t_ac_level zero;
     t_ac_level one;
-    t_ac_bootcode boot_code;
-    t_ac_delaycode dc[MAX_DELAYCODE_NUM];
+    t_ac_boot_code boot_code;
+    t_ac_delay_code dc[MAX_DELAYCODE_NUM];
     t_power_1 power1;
     t_temp_1 temp1;
     t_mode_1 mode1;

@@ -82,6 +82,7 @@ static INT8 ir_ac_binary_open(UINT8 *binary, UINT16 bin_length);
 static UINT16 ir_ac_control(t_remote_ac_status ac_status, UINT16* user_data, UINT8 key_code,
                             BOOL change_wind_direction);
 static INT8 ir_ac_binary_close();
+static BOOL validate_ac_status(t_remote_ac_status* ac_status, BOOL change_wind_dir);
 
 #if !defined NO_FS
 static INT8 ir_tv_file_open(const char *file_name);
@@ -259,6 +260,10 @@ UINT16 ir_decode(UINT8 key_code, UINT16* user_data,
                   ac_status->ac_temp, ac_status->ac_wind_dir,
                   ac_status->ac_wind_speed,
                   key_code, change_wind_direction);
+        // ac status validation
+        if (FALSE == validate_ac_status(ac_status, change_wind_direction)) {
+            return 0;
+        }
         return ir_ac_control(*ac_status, user_data, key_code, change_wind_direction);
     }
 }
@@ -487,6 +492,35 @@ static INT8 ir_ac_binary_close()
     free_ac_context();
 
     return IR_DECODE_SUCCEEDED;
+}
+
+static BOOL validate_ac_status(t_remote_ac_status* ac_status, BOOL change_wind_dir)
+{
+    if (AC_POWER_OFF != ac_status->ac_power && AC_POWER_ON != ac_status->ac_power)
+    {
+        return FALSE;
+    }
+    if (ac_status->ac_mode < AC_MODE_COOL || ac_status->ac_mode >= AC_POWER_MAX)
+    {
+        return FALSE;
+    }
+    if (ac_status->ac_temp < AC_TEMP_16 || ac_status->ac_temp >= AC_TEMP_MAX)
+    {
+        return FALSE;
+    }
+    if (ac_status->ac_wind_speed < AC_WS_AUTO || ac_status->ac_wind_speed >= AC_WS_MAX)
+    {
+        return FALSE;
+    }
+    if (ac_status->ac_wind_dir < AC_SWING_ON || ac_status->ac_wind_dir >= AC_SWING_MAX)
+    {
+        return FALSE;
+    }
+    if (0 != change_wind_dir && 1 != change_wind_dir)
+    {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 // utils
