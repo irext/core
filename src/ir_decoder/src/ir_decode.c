@@ -500,7 +500,7 @@ static BOOL validate_ac_status(t_remote_ac_status* ac_status, BOOL change_wind_d
     {
         return FALSE;
     }
-    if (ac_status->ac_mode < AC_MODE_COOL || ac_status->ac_mode >= AC_POWER_MAX)
+    if (ac_status->ac_mode < AC_MODE_COOL || ac_status->ac_mode >= AC_MODE_MAX)
     {
         return FALSE;
     }
