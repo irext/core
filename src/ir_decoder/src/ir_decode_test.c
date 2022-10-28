@@ -36,7 +36,7 @@ void input_number(int *val)
     {
         if(n[i] < '0'||n[i] > '9')
         {
-            printf("\nInvalid number format, please re-input : ");
+            printf("invalid number format, please re-input : ");
             scanf("%s", n);
             i=0;
         }
@@ -94,13 +94,13 @@ static INT8 decode_as_ac(char *file_name)
     {
         if (1 == first_time)
         {
-            printf("Please input valid key code "
-                   "(Key code could be referenced from https://irext.net/doc#keymap) : \n");
+            printf("please input valid key code "
+                   "(key code could be referenced from https://irext.net/doc#keymap) : \n");
             first_time = 0;
         }
         else
         {
-            printf("Please input valid key code : \n");
+            printf("please input valid key code : \n");
         }
         input_number(&key_code);
 
@@ -219,7 +219,7 @@ static INT8 decode_as_ac(char *file_name)
                        ac_status.ac_wind_dir,
                        key_code);
                 length = ir_decode(key_code, user_data, &ac_status, change_wind_dir);
-                printf("\n === Binary decoded : %d\n", length);
+                printf("\n === binary decoded : %d\n", length);
                 for (index = 0; index < length; index++)
                 {
                     printf("%d, ", user_data[index]);
@@ -245,6 +245,7 @@ static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
     // here remote category TV represents for command typed IR code
     if (IR_DECODE_FAILED == ir_file_open(REMOTE_CATEGORY_TV, ir_hex_encode, file_name))
     {
+        printf("failed to open file : %s\n", file_name);
         ir_close();
         return IR_DECODE_FAILED;
     }
@@ -253,13 +254,13 @@ static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
     {
         if (1 == first_time)
         {
-            printf("Please input valid key code "
+            printf("please input valid key code "
                    "(Key code could be referenced from https://irext.net/doc#keymap) : \n");
             first_time = 0;
         }
         else
         {
-            printf("Please input valid key code : \n");
+            printf("please input valid key code : \n");
         }
         input_number(&key_code);
         if (99 == key_code)
@@ -267,7 +268,7 @@ static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
             break;
         }
         length = ir_decode(key_code, user_data, NULL, 0);
-        printf("\n === Binary decoded : %d\n", length);
+        printf("\n === binary decoded : %d\n", length);
         for (index = 0; index < length; index++)
         {
             printf("%d, ", user_data[index]);
@@ -281,7 +282,7 @@ static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
 }
 
 static void print_usage(const char *progn) {
-    printf("Usage: %s [function] [file] [subcate]\n"
+    printf("usage: %s [function] [file] [subcate]\n"
               "[function] : 0 - decode for AC; 1 - decode for TV\n"
               "[file]     : the remote control binary file\n"
               "[subcate]  : the sub_cate value from remote_index", progn);
@@ -304,17 +305,17 @@ int main(int argc, char *argv[])
     switch (function)
     {
         case '0':
-            printf("Decode %s as status-typed binary\n", argv[2]);
+            printf("decode %s as status-typed binary\n", argv[2]);
             decode_as_ac(argv[2]);
             break;
 
         case '1':
-            printf("Decode %s as command-typed binary in sub_cate %d\n", argv[2], ir_hex_encode);
+            printf("decode %s as command-typed binary in sub_cate %d\n", argv[2], ir_hex_encode);
             decode_as_tv(argv[2], ir_hex_encode);
             break;
 
         default:
-            printf("Decode functionality not supported : %c\n", function);
+            printf("decode functionality not supported : %c\n", function);
             break;
     }
 }

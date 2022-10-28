@@ -686,7 +686,7 @@ static INT8 ir_tv_file_open(const char *file_name)
 
     if (stream == NULL)
     {
-        ir_printf("\nfile open failed\n");
+        ir_printf("file open failed\n");
         return IR_DECODE_FAILED;
     }
 
@@ -696,7 +696,7 @@ static INT8 ir_tv_file_open(const char *file_name)
     binary_content = (UINT8 *) ir_malloc(binary_length);
     if (NULL == binary_content)
     {
-        ir_printf("\nfailed to alloc memory for binary\n");
+        ir_printf("failed to malloc memory for binary\n");
         fclose(stream);
         return IR_DECODE_FAILED;
     }
@@ -715,6 +715,7 @@ static INT8 ir_tv_file_open(const char *file_name)
 
     if (IR_DECODE_FAILED == ir_tv_binary_open(binary_content, (UINT16) binary_length))
     {
+        printf("failed to parse command type binary\n");
         ir_free(binary_content);
         binary_length = 0;
         return IR_DECODE_FAILED;
