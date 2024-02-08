@@ -48,6 +48,6 @@ __Status code__
 
   The output of the algorithm is the time series, which can be sent to IR emit driver function to send IR control waves to the family equipment.
 
-  Please refer to https://irext.net/doc/ for details.
+  Please refer to https://site.irext.net/doc/ for details.
 
 
