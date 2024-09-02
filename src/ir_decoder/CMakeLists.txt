@@ -29,7 +29,8 @@ set(SOURCE_FILES_EXECUTABLE
         src/ir_ac_control.c
         src/ir_ac_binary_parse.c
         src/ir_decode.c
-        src/ir_decode_test.c)
+        src/ir_decode_test.c
+        jni/src/ir_decode_jni.c)
 
 set(SOURCE_FILES_LIB
         src/ir_utils.c
@@ -69,5 +70,6 @@ set(SOURCE_FILES_JNI_SHARED_LIB
 
 # add_library(ir_decoder SHARED ${SOURCE_FILES_LIB})
 # add_library(ir_decoder STATIC ${SOURCE_FILES_LIB})
-add_executable(ir_decoder ${SOURCE_FILES_EXECUTABLE})
+add_executable(ir_decoder ${SOURCE_FILES_EXECUTABLE}
+        jni/src/ir_decode_jni.c)
 # add_library(ir_decoder SHARED ${SOURCE_FILES_JNI_SHARED_LIB})
