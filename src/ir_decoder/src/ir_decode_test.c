@@ -30,14 +30,20 @@ void input_number(int *val)
     char n[50]={0};
     int i = 0;
     *val = 0;
-    scanf("%s", n);
+    if (0 != scanf("%s", n))
+    {
+        return;
+    }
     getchar();
     while(1)
     {
         if(n[i] < '0'||n[i] > '9')
         {
             printf("invalid number format, please re-input : ");
-            scanf("%s", n);
+            if (0 != scanf("%s", n))
+            {
+                break;
+            }
             i=0;
         }
         else
