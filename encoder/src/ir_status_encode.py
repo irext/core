@@ -71,7 +71,7 @@ def create_binary(ac_device):
 
                 # Find Max length
                 if tags_max_size[i] < ac_device.tags[j].len:
-                    tags_max_size[i] = ac_device.tags[j].len;
+                    tags_max_size[i] = ac_device.tags[j].len
                 find = 1
                 break
 
