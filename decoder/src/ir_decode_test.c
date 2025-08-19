@@ -289,7 +289,7 @@ static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
 
 static void print_usage(const char *progn) {
     printf("usage: %s [function] [file] [subcate]\n"
-              "[function] : 0 - decode for AC; 1 - decode for TV\n"
+              "[function] : 0 - decode for AC; 1 - decode for others\n"
               "[file]     : the remote control binary file\n"
               "[subcate]  : the sub_cate value from remote_index", progn);
 }
