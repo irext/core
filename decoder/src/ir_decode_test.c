@@ -291,7 +291,7 @@ static void print_usage(const char *progn) {
     printf("usage: %s [function] [file] [subcate]\n"
               "[function] : 0 - decode for AC; 1 - decode for others\n"
               "[file]     : the remote control binary file\n"
-              "[subcate]  : the sub_cate value from remote_index", progn);
+              "[sub_cate]  : the sub_cate value from remote_index", progn);
 }
 
 int main(int argc, char *argv[])
