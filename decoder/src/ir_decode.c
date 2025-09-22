@@ -22,7 +22,7 @@ Revision log:
 struct ir_bin_buffer binary_file;
 struct ir_bin_buffer *p_ir_buffer = &binary_file;
 
-static const char* version = "0.2.5";
+static const char* version = IR_DECODE_LIB_VER;
 
 #if defined USE_DYNAMIC_TAG
 struct tag_head *tags;
