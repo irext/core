@@ -67,7 +67,7 @@ void noprint(const char *fmt, ...);
 #define ir_memset(A, B, C) memset(A, B, C)
 #define ir_strlen(A) strlen(A)
 #if ((defined BOARD_PC) || (defined BOARD_PC_JNI)) && (defined DEBUG)
-#define ir_printf printf
+#define ir_printf(...) do { printf(__VA_ARGS__); fflush(stdout); } while(0)
 #else
 #define ir_printf noprint
 #endif

@@ -219,7 +219,19 @@ INT8 ir_binary_open(const UINT8 category, const UINT8 sub_category, UINT8* binar
             return IR_DECODE_FAILED;
         }
 
-        ret = ir_tv_binary_open(binary, bin_length);
+#if (defined(BOARD_PC) || defined (BOARD_PC_DLL))
+    binary_content = (UINT8 *) ir_malloc(bin_length);
+    if (NULL == binary_content)
+    {
+        ir_printf("failed to malloc memory for binary\n");
+        return IR_DECODE_FAILED;
+    }
+    memcpy(binary_content, binary, bin_length);
+#else
+    binary_content = buffer;
+#endif
+
+        ret = ir_tv_binary_open(binary_content, bin_length);
         if (IR_DECODE_SUCCEEDED == ret)
         {
             return ir_tv_binary_parse(ir_hexadecimal);
@@ -715,7 +727,7 @@ static INT8 ir_tv_file_open(const char *file_name)
 
     if (IR_DECODE_FAILED == ir_tv_binary_open(binary_content, (UINT16) binary_length))
     {
-        printf("failed to parse command type binary\n");
+        ir_printf("failed to parse command type binary\n");
         ir_free(binary_content);
         binary_length = 0;
         return IR_DECODE_FAILED;
