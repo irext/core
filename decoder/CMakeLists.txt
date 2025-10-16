@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
 ########################################################
-project(ir_decoder)
+project(ir_decode)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_definitions(-DBOARD_PC)
-# add_definitions(-DBOARD_PC_JNI)
+add_definitions(-DBOARD_PC_JNI)
 # add_definitions(-DDEBUG)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
@@ -57,17 +57,23 @@ set(SOURCE_FILES_JNI_SHARED_LIB
         src/ir_decode.c)
 
 # SET(CMAKE_SYSTEM_NAME Linux)
-## ARM32 cross compile
-# SET(CMAKE_C_COMPILER "/usr/bin/arm-linux-gnueabi-gcc")
-# SET(CMAKE_CXX_COMPILER "/usr/bin/arm-linux-gnueabi-g++")
+## ARMv7hf cross compile
+# SET(CMAKE_C_COMPILER "/usr/bin/arm-linux-gnueabihf-gcc")
+# SET(CMAKE_CXX_COMPILER "/usr/bin/arm-linux-gnueabihf-g++")
 # SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
+
+# SET(CMAKE_SYSTEM_NAME Linux)
+## ARMv7el cross compile
+SET(CMAKE_C_COMPILER "/usr/bin/arm-linux-gnueabi-gcc")
+SET(CMAKE_CXX_COMPILER "/usr/bin/arm-linux-gnueabi-g++")
+SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
 
 ## ARM64 cross compile
 # SET(CMAKE_C_COMPILER "/usr/bin/aarch64-linux-gnu-gcc")
 # SET(CMAKE_CXX_COMPILER "/usr/bin/aarch64-linux-gnu-g++")
 # SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
 
-# add_library(ir_decoder SHARED ${SOURCE_FILES_LIB})
-# add_library(ir_decoder STATIC ${SOURCE_FILES_LIB})
-add_executable(ir_decoder ${SOURCE_FILES_EXECUTABLE})
-# add_library(ir_decoder SHARED ${SOURCE_FILES_JNI_SHARED_LIB})
+# add_library(ir_decode SHARED ${SOURCE_FILES_LIB})
+# add_library(ir_decode STATIC ${SOURCE_FILES_LIB})
+# add_executable(ir_decode ${SOURCE_FILES_EXECUTABLE})
+add_library(ir_decode SHARED ${SOURCE_FILES_JNI_SHARED_LIB})
