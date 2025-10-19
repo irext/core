@@ -220,15 +220,15 @@ INT8 ir_binary_open(const UINT8 category, const UINT8 sub_category, UINT8* binar
         }
 
 #if (defined(BOARD_PC) || defined (BOARD_PC_DLL) || defined (BOARD_ANDROID))
-    binary_content = (UINT8 *) ir_malloc(bin_length);
-    if (NULL == binary_content)
-    {
-        ir_printf("failed to malloc memory for binary\n");
-        return IR_DECODE_FAILED;
-    }
-    memcpy(binary_content, binary, bin_length);
+        binary_content = (UINT8 *) ir_malloc(bin_length);
+        if (NULL == binary_content)
+        {
+            ir_printf("failed to malloc memory for binary\n");
+            return IR_DECODE_FAILED;
+        }
+        memcpy(binary_content, binary, bin_length);
 #else
-    binary_content = binary;
+        binary_content = binary;
 #endif
 
         ret = ir_tv_binary_open(binary_content, bin_length);
