@@ -44,7 +44,7 @@ void input_number(int *val)
             {
                 break;
             }
-            i=0;
+            i = 0;
         }
         else
         {
