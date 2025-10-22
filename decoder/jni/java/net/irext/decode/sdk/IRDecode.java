@@ -40,16 +40,14 @@ public class IRDecode {
     private native int irACGetSupportedWindDirection(int acMode);
 
     private static IRDecode mInstance;
-
     public static IRDecode getInstance() {
         if (null == mInstance) {
             mInstance = new IRDecode();
         }
         return mInstance;
     }
-
     private IRDecode() {
-        String libPath = "/data/irext/libir_decode.so";
+        String libPath = "/data/irext/libirdecode_jni.so";
         System.out.println("loading decode library " + libPath);
         System.load(libPath);
     }
