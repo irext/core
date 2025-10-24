@@ -46,12 +46,12 @@ public class IRDecode {
         }
         return mInstance;
     }
+
     private IRDecode() {
         String libPath = "/data/irext/libirdecode_jni.so";
         System.out.println("loading decode library " + libPath);
         System.load(libPath);
     }
-
     public String getVersion() {
         return irGetVersion();
     }

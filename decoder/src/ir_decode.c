@@ -105,7 +105,7 @@ const char* get_lib_version()
     return version;
 }
 
-#if (!defined BOARD_51 && !defined BOARD_CC26XX)
+#if (!defined BOARD_SOC)
 INT8 ir_file_open(const UINT8 category, const UINT8 sub_category, const char* file_name)
 {
     INT8 ret = 0;
