@@ -13,8 +13,8 @@ Revision log:
 #include <stdio.h>
 #include <string.h>
 
-#include "include/ir_utils.h"
-#include "include/ir_ac_parse_parameter.h"
+#include "ir_utils.h"
+#include "ir_ac_parse_parameter.h"
 
 static INT8 parse_checksum_byte_typed(const UINT8 *csdata, t_tag_checksum_data *checksum, UINT16 len);
 
@@ -236,6 +236,13 @@ INT8 parse_temp_1(struct tag_head *tag, t_temp_1 *temp1)
         temp1->len = (UINT8) hex_len;
         UINT8 seg_len = hex_data[0];
 
+        // Initialize all segments to NULL to ensure proper cleanup in case of error
+        for (seg_index = AC_TEMP_16; seg_index < (UINT16) AC_TEMP_MAX; seg_index++)
+        {
+            temp1->comp_data[seg_index].seg_len = 0;
+            temp1->comp_data[seg_index].segment = NULL;
+        }
+
         for (seg_index = AC_TEMP_16; seg_index < (UINT16) AC_TEMP_MAX; seg_index++)
         {
             // 020210 indicates set the 02nd byte to [default] +10, +11, +12, +...
@@ -243,6 +250,17 @@ INT8 parse_temp_1(struct tag_head *tag, t_temp_1 *temp1)
             temp1->comp_data[seg_index].segment = (UINT8 *) ir_malloc(seg_len);
             if (NULL == temp1->comp_data[seg_index].segment)
             {
+                // Clean up previously allocated memory
+                UINT16 cleanup_idx;
+                for (cleanup_idx = AC_TEMP_16; cleanup_idx < seg_index; cleanup_idx++)
+                {
+                    if (temp1->comp_data[cleanup_idx].segment != NULL)
+                    {
+                        ir_free(temp1->comp_data[cleanup_idx].segment);
+                        temp1->comp_data[cleanup_idx].segment = NULL;
+                        temp1->comp_data[cleanup_idx].seg_len = 0;
+                    }
+                }
                 ir_free(hex_data);
                 return IR_DECODE_FAILED;
             }
@@ -400,10 +418,30 @@ INT8 parse_swing_1(struct tag_head *tag, t_swing_1 *swing1, UINT16 swing_count)
         return IR_DECODE_FAILED;
     }
 
+    // Initialize the comp_data to ensure proper cleanup in case of error
+    for (seg_index = 0; seg_index < swing_count; seg_index++)
+    {
+        swing1->comp_data[seg_index].seg_len = 0;
+        swing1->comp_data[seg_index].segment = NULL;
+    }
+
     for (seg_index = 0; seg_index < swing_count; seg_index++)
     {
         if (IR_DECODE_FAILED == parse_comp_data_type_1(hex_data, &trav_offset, &swing1->comp_data[seg_index]))
         {
+            // Clean up any allocated memory in previous iterations
+            UINT16 i;
+            for (i = 0; i < seg_index; i++)
+            {
+                if (swing1->comp_data[i].segment != NULL)
+                {
+                    ir_free(swing1->comp_data[i].segment);
+                    swing1->comp_data[i].segment = NULL;
+                    swing1->comp_data[i].seg_len = 0;
+                }
+            }
+            ir_free(swing1->comp_data);
+            swing1->comp_data = NULL;
             ir_free(hex_data);
             return IR_DECODE_FAILED;
         }
@@ -518,6 +556,16 @@ INT8 parse_checksum(struct tag_head *tag, t_checksum *checksum)
                                                         checksum->checksum_data + num,
                                                         (UINT8) (i - preindex) >> (UINT8) 1))
             {
+                // Clean up allocated memory on error
+                UINT16 j;
+                for (j = 0; j < num; j++) {
+                    if (checksum->checksum_data[j].spec_pos != NULL) {
+                        ir_free(checksum->checksum_data[j].spec_pos);
+                        checksum->checksum_data[j].spec_pos = NULL;
+                    }
+                }
+                ir_free(checksum->checksum_data);
+                checksum->checksum_data = NULL;
                 return IR_DECODE_FAILED;
             }
             preindex = (UINT16) (i + 1);
@@ -529,6 +577,16 @@ INT8 parse_checksum(struct tag_head *tag, t_checksum *checksum)
                                                 checksum->checksum_data + num,
                                                 (UINT8) (i - preindex) >> (UINT8) 1))
     {
+        // Clean up allocated memory on error
+        UINT16 j;
+        for (j = 0; j <= num; j++) {
+            if (checksum->checksum_data[j].spec_pos != NULL) {
+                ir_free(checksum->checksum_data[j].spec_pos);
+                checksum->checksum_data[j].spec_pos = NULL;
+            }
+        }
+        ir_free(checksum->checksum_data);
+        checksum->checksum_data = NULL;
         return IR_DECODE_FAILED;
     }
 
@@ -635,18 +693,12 @@ INT8 parse_function_1_tag29(struct tag_head *tag, t_function_1 *function1)
     // seg_index in TAG only refers to functional count
     for (seg_index = AC_FUNCTION_POWER; seg_index < (UINT16) AC_FUNCTION_MAX; seg_index++)
     {
-        /** WARNING: for strict mode only **/
-        /**
-        INT8 fid = parse_function_1(hex_data, &trav_offset, &function1->comp_data[0]);
-        if (fid > AC_FUNCTION_MAX - 1)
+        INT8 result = parse_function_1(hex_data, &trav_offset, &function1->comp_data[0]);
+        if (result == IR_DECODE_FAILED)
         {
-            irda_free(hex_data);
-            hex_data = NULL;
+            ir_free(hex_data);
             return IR_DECODE_FAILED;
         }
-        **/
-
-        parse_function_1(hex_data, &trav_offset, &function1->comp_data[0]);
         if (trav_offset >= hex_len)
         {
             break;
@@ -694,6 +746,13 @@ INT8 parse_temp_2(struct tag_head *tag, t_temp_2 *temp2)
         temp2->len = (UINT8) hex_len;
         UINT8 seg_len = hex_data[0];
 
+        // Initialize all segments to NULL to ensure proper cleanup in case of error
+        for (seg_index = AC_TEMP_16; seg_index < (UINT16) AC_TEMP_MAX; seg_index++)
+        {
+            temp2->comp_data[seg_index].seg_len = 0;
+            temp2->comp_data[seg_index].segment = NULL;
+        }
+
         for (seg_index = AC_TEMP_16; seg_index < (UINT16) AC_TEMP_MAX; seg_index++)
         {
             // 020210 indicates set the 02nd byte to [default] +10, +11, +12, +...
@@ -701,6 +760,17 @@ INT8 parse_temp_2(struct tag_head *tag, t_temp_2 *temp2)
             temp2->comp_data[seg_index].segment = (UINT8 *) ir_malloc(seg_len);
             if (NULL == temp2->comp_data[seg_index].segment)
             {
+                // Clean up previously allocated memory
+                UINT16 cleanup_idx;
+                for (cleanup_idx = AC_TEMP_16; cleanup_idx < seg_index; cleanup_idx++)
+                {
+                    if (temp2->comp_data[cleanup_idx].segment != NULL)
+                    {
+                        ir_free(temp2->comp_data[cleanup_idx].segment);
+                        temp2->comp_data[cleanup_idx].segment = NULL;
+                        temp2->comp_data[cleanup_idx].seg_len = 0;
+                    }
+                }
                 ir_free(hex_data);
                 return IR_DECODE_FAILED;
             }
@@ -873,10 +943,30 @@ INT8 parse_swing_2(struct tag_head *tag, t_swing_2 *swing2, UINT16 swing_count)
         return IR_DECODE_FAILED;
     }
 
+    // Initialize the comp_data to ensure proper cleanup in case of error
+    for (seg_index = 0; seg_index < swing_count; seg_index++)
+    {
+        swing2->comp_data[seg_index].seg_len = 0;
+        swing2->comp_data[seg_index].segment = NULL;
+    }
+
     for (seg_index = 0; seg_index < swing_count; seg_index++)
     {
         if (IR_DECODE_FAILED == parse_comp_data_type_2(hex_data, &trav_offset, &swing2->comp_data[seg_index]))
         {
+            // Clean up any allocated memory in previous iterations
+            UINT16 i;
+            for (i = 0; i < seg_index; i++)
+            {
+                if (swing2->comp_data[i].segment != NULL)
+                {
+                    ir_free(swing2->comp_data[i].segment);
+                    swing2->comp_data[i].segment = NULL;
+                    swing2->comp_data[i].seg_len = 0;
+                }
+            }
+            ir_free(swing2->comp_data);
+            swing2->comp_data = NULL;
             ir_free(hex_data);
             return IR_DECODE_FAILED;
         }
@@ -993,18 +1083,12 @@ INT8 parse_function_2_tag34(struct tag_head *tag, t_function_2 *function2)
     // seg_index in TAG only refers to functional count
     for (seg_index = AC_FUNCTION_POWER; seg_index < (UINT16) AC_FUNCTION_MAX; seg_index++)
     {
-        /** WARNING: for strict mode only **/
-        /**
-        INT8 fid = parse_function_2(hex_data, &trav_offset, &function2->comp_data[0]);
-        if (fid > AC_FUNCTION_MAX - 1)
+        INT8 result = parse_function_2(hex_data, &trav_offset, &function2->comp_data[0]);
+        if (result == IR_DECODE_FAILED)
         {
-            irda_free(hex_data);
-            hex_data = NULL;
+            ir_free(hex_data);
             return IR_DECODE_FAILED;
         }
-        **/
-
-        parse_function_2(hex_data, &trav_offset, &function2->comp_data[0]);
         if (trav_offset >= hex_len)
         {
             break;

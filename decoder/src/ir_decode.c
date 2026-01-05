@@ -14,10 +14,10 @@ Revision log:
 
 #include <string.h>
 
-#include "include/ir_decode.h"
-#include "include/ir_utils.h"
-#include "include/ir_ac_build_frame.h"
-#include "include/ir_ac_apply.h"
+#include "ir_decode.h"
+#include "ir_utils.h"
+#include "ir_ac_build_frame.h"
+#include "ir_ac_apply.h"
 
 struct ir_bin_buffer binary_file;
 struct ir_bin_buffer *p_ir_buffer = &binary_file;
@@ -79,18 +79,23 @@ static INT8 ir_ac_file_open(const char *file_name);
 #endif
 
 static INT8 ir_ac_binary_open(UINT8 *binary, UINT16 bin_length);
-static UINT16 ir_ac_control(t_remote_ac_status ac_status, UINT16* user_data, UINT8 key_code,
-                            BOOL change_wind_direction);
+
+static UINT16 ir_ac_control(t_remote_ac_status *ac_status, UINT16* user_data, UINT8 key_code);
+
 static INT8 ir_ac_binary_close();
-static BOOL validate_ac_status(t_remote_ac_status* ac_status, BOOL change_wind_dir);
+
+static BOOL validate_ac_status(t_remote_ac_status* ac_status);
 
 #if !defined NO_FS
 static INT8 ir_tv_file_open(const char *file_name);
 #endif
 
 static INT8 ir_tv_binary_open(UINT8 *binary, UINT16 bin_length);
+
 static INT8 ir_tv_binary_parse(UINT8 ir_hex_encode);
+
 static UINT16 ir_tv_control(UINT8 key, UINT16 *l_user_data);
+
 static INT8 ir_tv_binary_close();
 
 
@@ -244,8 +249,7 @@ INT8 ir_binary_open(const UINT8 category, const UINT8 sub_category, UINT8* binar
 }
 
 /** the main entry of decode algorithm **/
-UINT16 ir_decode(UINT8 key_code, UINT16* user_data,
-        t_remote_ac_status* ac_status, BOOL change_wind_direction)
+UINT16 ir_decode(UINT8 key_code, UINT16* user_data, t_remote_ac_status* ac_status)
 {
     ir_printf("remote_category = %d, KEY_CODE_MAX = %d\n", remote_category, KEY_CODE_MAX[remote_category]);
 
@@ -266,20 +270,20 @@ UINT16 ir_decode(UINT8 key_code, UINT16* user_data,
             return 0;
         }
         ir_printf("ac status is not null in decode core : power = %d, mode = %d, "
-                  "temp = %d, wind_dir = %d, wind_speed = %d, "
-                  "key_code = %d, change_wind_direction = %d\n",
+                  "temp = %d, wind_dir = %d, wind_speed = %d, change_wind_direction = %d, "
+                  "key_code = %d\n",
                   ac_status->ac_power, ac_status->ac_mode,
                   ac_status->ac_temp, ac_status->ac_wind_dir,
                   ac_status->ac_wind_speed,
-                  key_code, change_wind_direction);
+                  ac_status->change_wind_direction,
+                  key_code);
         // ac status validation
-        if (FALSE == validate_ac_status(ac_status, change_wind_direction)) {
+        if (FALSE == validate_ac_status(ac_status)) {
             return 0;
         }
-        return ir_ac_control(*ac_status, user_data, key_code, change_wind_direction);
+        return ir_ac_control(ac_status, user_data, key_code);
     }
 }
-
 
 INT8 ir_close()
 {
@@ -359,8 +363,7 @@ static INT8 ir_ac_binary_open(UINT8 *binary, UINT16 bin_length)
     return IR_DECODE_SUCCEEDED;
 }
 
-static UINT16 ir_ac_control(t_remote_ac_status ac_status, UINT16* user_data, UINT8 key_code,
-                            BOOL change_wind_direction)
+static UINT16 ir_ac_control(t_remote_ac_status *ac_status, UINT16* user_data, UINT8 key_code)
 {
     UINT16 time_length = 0;
     UINT8 function_code = 0;
@@ -402,7 +405,7 @@ static UINT16 ir_ac_control(t_remote_ac_status ac_status, UINT16* user_data, UIN
     }
 
     // pre-set change wind direction flag here
-    context->change_wind_direction = change_wind_direction;
+    context->change_wind_direction = ac_status->change_wind_direction;
 
     context->time = user_data;
 
@@ -410,15 +413,16 @@ static UINT16 ir_ac_control(t_remote_ac_status ac_status, UINT16* user_data, UIN
     ir_memcpy(ir_hex_code, context->default_code.data, context->default_code.len);
 
 #if defined USE_APPLY_TABLE
-    if(ac_status.ac_power != AC_POWER_OFF)
+    if(ac_status->ac_power != AC_POWER_OFF)
     {
+        UINT8 i;
         for (i = AC_APPLY_POWER; i < AC_APPLY_MAX; i++)
         {
-            apply_table[i](context, parameter_array[i]);
+            apply_table[i](ac_status, function_code);
         }
     }
 #else
-    if (ac_status.ac_power == AC_POWER_OFF)
+    if (ac_status->ac_power == AC_POWER_OFF)
     {
         // otherwise, power should always be applied
         apply_power(ac_status, function_code);
@@ -426,7 +430,7 @@ static UINT16 ir_ac_control(t_remote_ac_status ac_status, UINT16* user_data, UIN
     else
     {
         // check the mode as the first priority, despite any other status
-        if (TRUE == context->n_mode[ac_status.ac_mode].enable)
+        if (TRUE == context->n_mode[ac_status->ac_mode].enable)
         {
             if (is_solo_function(function_code))
             {
@@ -506,7 +510,7 @@ static INT8 ir_ac_binary_close()
     return IR_DECODE_SUCCEEDED;
 }
 
-static BOOL validate_ac_status(t_remote_ac_status* ac_status, BOOL change_wind_dir)
+static BOOL validate_ac_status(t_remote_ac_status* ac_status)
 {
     if (AC_POWER_OFF != ac_status->ac_power && AC_POWER_ON != ac_status->ac_power)
     {
@@ -528,7 +532,7 @@ static BOOL validate_ac_status(t_remote_ac_status* ac_status, BOOL change_wind_d
     {
         return FALSE;
     }
-    if (0 != change_wind_dir && 1 != change_wind_dir)
+    if (0 != ac_status->change_wind_direction && 1 != ac_status->change_wind_direction)
     {
         return FALSE;
     }
@@ -776,7 +780,7 @@ static INT8 ir_tv_binary_close()
 UINT16 ir_decode_combo(const UINT8 category, const UINT8 sub_category,
                        UINT8* binary, UINT16 bin_length,
                        UINT8 key_code, UINT16* user_data,
-                       t_remote_ac_status* ac_status, BOOL change_wind_direction)
+                       t_remote_ac_status* ac_status)
 {
     UINT16 decoded_length = 0;
 
@@ -798,7 +802,7 @@ UINT16 ir_decode_combo(const UINT8 category, const UINT8 sub_category,
     if (IR_DECODE_SUCCEEDED ==
         ir_binary_open(category, sub_category, binary, bin_length))
     {
-        decoded_length = ir_decode(key_code, user_data, ac_status, change_wind_direction);
+        decoded_length = ir_decode(key_code, user_data, ac_status);
         ir_close();
         return decoded_length;
     }

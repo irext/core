@@ -342,7 +342,7 @@ typedef struct ac_protocol
 
     UINT8 swing_status;
 
-    BOOL change_wind_direction;
+    UINT8 change_wind_direction;
 
     UINT16 dc_cnt;
     t_ac_bit_num bit_num[MAX_BITNUM];
@@ -382,10 +382,11 @@ typedef struct REMOTE_AC_STATUS
     UINT8 ac_display;
     UINT8 ac_sleep;
     UINT8 ac_timer;
+    UINT8 change_wind_direction;
 } t_remote_ac_status;
 
 // function polymorphism
-typedef INT8 (*lp_apply_ac_parameter)(t_remote_ac_status ac_status, UINT8 function_code);
+typedef INT8 (*lp_apply_ac_parameter)(t_remote_ac_status *ac_status, UINT8 function_code);
 
 #define TAG_AC_BOOT_CODE                  1
 #define TAG_AC_ZERO                       2

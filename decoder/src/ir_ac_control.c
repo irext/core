@@ -13,13 +13,13 @@ Revision log:
 #include <stdio.h>
 #include <string.h>
 
-#include "include/ir_ac_control.h"
-#include "include/ir_ac_binary_parse.h"
-#include "include/ir_decode.h"
-#include "include/ir_ac_parse_parameter.h"
-#include "include/ir_ac_parse_forbidden_info.h"
-#include "include/ir_ac_parse_frame_info.h"
-#include "include/ir_utils.h"
+#include "ir_ac_control.h"
+#include "ir_ac_binary_parse.h"
+#include "ir_decode.h"
+#include "ir_ac_parse_parameter.h"
+#include "ir_ac_parse_forbidden_info.h"
+#include "ir_ac_parse_frame_info.h"
+#include "ir_utils.h"
 
 
 #if defined USE_DYNAMIC_TAG

@@ -15,9 +15,9 @@ Revision log:
 
 #include <string.h>
 
-#include "include/ir_defs.h"
-#include "include/ir_decode.h"
-#include "include/ir_tv_control.h"
+#include "ir_defs.h"
+#include "ir_decode.h"
+#include "ir_tv_control.h"
 
 
 struct buffer

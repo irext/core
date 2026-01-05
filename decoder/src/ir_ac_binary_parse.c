@@ -9,8 +9,8 @@ Revision log:
 * 2017-01-03: created by strawmanbobi
 **************************************************************************************/
 
-#include "include/ir_ac_binary_parse.h"
-#include "include/ir_decode.h"
+#include "ir_ac_binary_parse.h"
+#include "ir_decode.h"
 
 UINT16 tag_head_offset = 0;
 

@@ -276,11 +276,10 @@ extern INT8 ir_binary_open(const UINT8 category, const UINT8 sub_category, UINT8
  * parameters:  key_code (in) - the code of pressed key
  *              user_data (out) - output decoded data in INT16 array format
  *              ac_status(in) - pointer to AC status (optional)
- *              change_wind_direction (in) - if control changes wind direction for AC (for AC only)
  *
  * returns:     length of decoded data (0 indicates decode failure)
  */
-extern UINT16 ir_decode(UINT8 key_code, UINT16* user_data, t_remote_ac_status* ac_status, BOOL change_wind_direction);
+extern UINT16 ir_decode(UINT8 key_code, UINT16* user_data, t_remote_ac_status* ac_status);
 
 /**
  * function     ir_close
@@ -362,7 +361,7 @@ extern void ir_lib_free_inner_buffer();
 UINT16 ir_decode_combo(const UINT8 category, const UINT8 sub_category,
                        UINT8* binary, UINT16 bin_length,
                        UINT8 key_code, UINT16* user_data,
-                       t_remote_ac_status* ac_status, BOOL change_wind_direction);
+                       t_remote_ac_status* ac_status);
 
 #ifdef __cplusplus
 }

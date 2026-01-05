@@ -17,8 +17,8 @@ Revision log:
 #include <stdlib.h>
 #include <string.h>
 
-#include "include/ir_decode.h"
-#include "include/ir_ac_parse_forbidden_info.h"
+#include "ir_decode.h"
+#include "ir_ac_parse_forbidden_info.h"
 
 
 extern t_ac_protocol *context;

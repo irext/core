@@ -14,8 +14,8 @@ Revision log:
 #pragma ide diagnostic ignored "readability-redundant-declaration"
 #endif
 
-#include "include/ir_ac_build_frame.h"
-#include "include/ir_decode.h"
+#include "ir_ac_build_frame.h"
+#include "ir_decode.h"
 
 extern t_ac_protocol* context;
 

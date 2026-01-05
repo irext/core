@@ -13,8 +13,8 @@ Revision log:
 #pragma ide diagnostic ignored "hicpp-signed-bitwise"
 #endif
 
-#include "include/ir_utils.h"
-#include "include/ir_ac_apply.h"
+#include "ir_utils.h"
+#include "ir_ac_apply.h"
 
 static INT8 apply_ac_power(struct ac_protocol *protocol, UINT8 power_status);
 
@@ -616,17 +616,17 @@ INT8 apply_checksum(struct ac_protocol *protocol)
     return IR_DECODE_SUCCEEDED;
 }
 
-INT8 apply_power(t_remote_ac_status ac_status, UINT8 function_code)
+INT8 apply_power(t_remote_ac_status *ac_status, UINT8 function_code)
 {
     (void) function_code;
-    apply_ac_power(context, ac_status.ac_power);
+    apply_ac_power(context, ac_status->ac_power);
     return IR_DECODE_SUCCEEDED;
 }
 
-INT8 apply_mode(t_remote_ac_status ac_status, UINT8 function_code)
+INT8 apply_mode(t_remote_ac_status *ac_status, UINT8 function_code)
 {
     (void) function_code;
-    if (IR_DECODE_FAILED == apply_ac_mode(context, ac_status.ac_mode))
+    if (IR_DECODE_FAILED == apply_ac_mode(context, ac_status->ac_mode))
     {
         // do not implement this mechanism since mode, temperature, wind
         // speed would have unspecified function
@@ -639,16 +639,16 @@ INT8 apply_mode(t_remote_ac_status ac_status, UINT8 function_code)
     return IR_DECODE_SUCCEEDED;
 }
 
-INT8 apply_wind_speed(t_remote_ac_status ac_status, UINT8 function_code)
+INT8 apply_wind_speed(t_remote_ac_status *ac_status, UINT8 function_code)
 {
-    if (FALSE == context->n_mode[ac_status.ac_mode].all_speed)
+    if (FALSE == context->n_mode[ac_status->ac_mode].all_speed)
     {
         // if this level is not in black list
-        if (!is_in(context->n_mode[ac_status.ac_mode].speed,
-                   ac_status.ac_wind_speed,
-                   context->n_mode[ac_status.ac_mode].speed_cnt))
+        if (!is_in(context->n_mode[ac_status->ac_mode].speed,
+                   ac_status->ac_wind_speed,
+                   context->n_mode[ac_status->ac_mode].speed_cnt))
         {
-            if (IR_DECODE_FAILED == apply_ac_wind_speed(context, ac_status.ac_wind_speed) &&
+            if (IR_DECODE_FAILED == apply_ac_wind_speed(context, ac_status->ac_wind_speed) &&
                 function_code == AC_FUNCTION_WIND_SPEED)
             {
                 // do not implement this mechanism since mode, temperature, wind
@@ -689,7 +689,7 @@ INT8 apply_wind_speed(t_remote_ac_status ac_status, UINT8 function_code)
     return IR_DECODE_SUCCEEDED;
 }
 
-INT8 apply_swing(t_remote_ac_status ac_status, UINT8 function_code)
+INT8 apply_swing(t_remote_ac_status *ac_status, UINT8 function_code)
 {
     (void) ac_status;
     if (function_code == AC_FUNCTION_WIND_FIX)
@@ -697,7 +697,7 @@ INT8 apply_swing(t_remote_ac_status ac_status, UINT8 function_code)
         // adjust fixed wind direction according to current status
         if (context->si.type == SWING_TYPE_NORMAL && context->si.mode_count > 1)
         {
-            if (TRUE == context->change_wind_direction)
+            if (1 == context->change_wind_direction)
             {
                 context->si.dir_index++;
             }
@@ -735,15 +735,15 @@ INT8 apply_swing(t_remote_ac_status ac_status, UINT8 function_code)
     return IR_DECODE_SUCCEEDED;
 }
 
-INT8 apply_temperature(t_remote_ac_status ac_status, UINT8 function_code)
+INT8 apply_temperature(t_remote_ac_status *ac_status, UINT8 function_code)
 {
-    if (FALSE == context->n_mode[ac_status.ac_mode].all_temp)
+    if (FALSE == context->n_mode[ac_status->ac_mode].all_temp)
     {
-        if (!is_in(context->n_mode[ac_status.ac_mode].temp,
-                   ac_status.ac_temp,
-                   context->n_mode[ac_status.ac_mode].temp_cnt))
+        if (!is_in(context->n_mode[ac_status->ac_mode].temp,
+                   ac_status->ac_temp,
+                   context->n_mode[ac_status->ac_mode].temp_cnt))
         {
-            if (IR_DECODE_FAILED == apply_ac_temperature(context, ac_status.ac_temp))
+            if (IR_DECODE_FAILED == apply_ac_temperature(context, ac_status->ac_temp))
             {
                 if (function_code == AC_FUNCTION_TEMPERATURE_UP
                     /*&& FALSE == has_function(context, AC_FUNCTION_TEMPERATURE_UP)*/)

@@ -10,11 +10,10 @@ Revision log:
 **************************************************************************************/
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
-#include "include/ir_utils.h"
-#include "include/ir_ac_parse_frame_info.h"
+#include "ir_utils.h"
+#include "ir_ac_parse_frame_info.h"
 
 
 INT8 parse_boot_code(struct tag_head *tag)
@@ -340,6 +339,14 @@ INT8 parse_bit_num(struct tag_head *tag)
     {
         if (context->bit_num[i].pos == -1)
             context->bit_num[i].pos = (UINT16) (context->default_code.len - 1); //convert -1 to last data pos
+    }
+    
+    // Ensure bit_num_cnt does not exceed MAX_BITNUM to prevent buffer overflow
+    if (context->bit_num_cnt > MAX_BITNUM)
+    {
+        ir_printf("Warning: bit_num_cnt (%d) exceeds MAX_BITNUM (%d), limiting to MAX_BITNUM\n", 
+                  context->bit_num_cnt, MAX_BITNUM);
+        context->bit_num_cnt = MAX_BITNUM;
     }
     return IR_DECODE_SUCCEEDED;
 }

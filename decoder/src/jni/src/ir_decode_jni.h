@@ -82,7 +82,7 @@ JNIEXPORT jint JNICALL Java_net_irext_decode_sdk_IRDecode_irOpenBinary
  * Signature: I(Lnet/irext/decodesdk/bean/ACStatus;I)[I
  */
 JNIEXPORT jintArray JNICALL Java_net_irext_decode_sdk_IRDecode_irDecode
-  (JNIEnv *, jobject, jint, jobject, jint);
+  (JNIEnv *, jobject, jint, jobject);
 
 /*
  * Class:     net_irext_decode_sdk_IRDecode
@@ -136,7 +136,7 @@ JNIEXPORT jint JNICALL Java_net_irext_decode_sdk_IRDecode_irACGetSupportedWindDi
 JNIEXPORT jintArray JNICALL Java_net_irext_decode_sdk_IRDecode_irDecodeCombo
         (JNIEnv *env, jobject this_obj, jint category_id, jint sub_cate,
          jbyteArray binaries, jint bin_length,
-         jint key_code, jobject jni_ac_status, jint change_wind_direction);
+         jint key_code, jobject jni_ac_status);
 
 #ifdef __cplusplus
 }

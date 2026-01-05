@@ -9,7 +9,7 @@ Revision log:
 * 2016-10-01: created by strawmanbobi
 **************************************************************************************/
 
-#include "include/ir_utils.h"
+#include "ir_utils.h"
 
 UINT8 char_to_hex(char chr)
 {

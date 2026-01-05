@@ -12,8 +12,8 @@ Revision log:
 #include <stdio.h>
 
 #include "ir_decode_jni.h"
-#include "../../src/include/ir_defs.h"
-#include "../../src/include/ir_decode.h"
+#include "ir_defs.h"
+#include "ir_decode.h"
 
 // global variable definition
 extern size_t binary_length;
@@ -59,7 +59,7 @@ JNIEXPORT jint JNICALL Java_net_irext_decode_sdk_IRDecode_irOpenBinary
 }
 
 JNIEXPORT jintArray JNICALL Java_net_irext_decode_sdk_IRDecode_irDecode
-          (JNIEnv *env, jobject this_obj, jint key_code, jobject jni_ac_status, jint change_wind_direction)
+          (JNIEnv *env, jobject this_obj, jint key_code, jobject jni_ac_status)
 {
     UINT16 user_data[USER_DATA_SIZE] = { 0 };
     int i = 0;
@@ -105,7 +105,7 @@ JNIEXPORT jintArray JNICALL Java_net_irext_decode_sdk_IRDecode_irDecode
         ir_printf("ac status is null, error!\n");
     }
 
-    int wave_code_length = ir_decode(key_code, user_data, &ac_status, change_wind_direction);
+    int wave_code_length = ir_decode(key_code, user_data, &ac_status);
 
     jintArray result = (*env)->NewIntArray(env, wave_code_length);
     if (result == NULL)
@@ -131,7 +131,7 @@ JNIEXPORT void JNICALL Java_net_irext_decode_sdk_IRDecode_irClose
 JNIEXPORT jintArray JNICALL Java_net_irext_decode_sdk_IRDecode_irDecodeCombo
         (JNIEnv *env, jobject this_obj, jint category_id, jint sub_cate,
          jbyteArray binaries, jint bin_length,
-         jint key_code, jobject jni_ac_status, jint change_wind_direction) {
+         jint key_code, jobject jni_ac_status) {
     UINT16 user_data[USER_DATA_SIZE] = { 0 };
     int i = 0;
     jint copy_array[USER_DATA_SIZE] = { 0 };
@@ -177,7 +177,7 @@ JNIEXPORT jintArray JNICALL Java_net_irext_decode_sdk_IRDecode_irDecodeCombo
     int wave_code_length = ir_decode_combo(category_id, sub_cate,
                                            buffer, bin_length,
                                            key_code, user_data,
-                                           &ac_status, change_wind_direction);
+                                           &ac_status);
 
     jintArray result = (*env)->NewIntArray(env, wave_code_length);
     if (result == NULL) {

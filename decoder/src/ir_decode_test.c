@@ -16,13 +16,13 @@ Revision log:
 #include <stdio.h>
 #include <string.h>
 
-#include "include/ir_defs.h"
-#include "include/ir_decode.h"
+#include "ir_defs.h"
+#include "ir_decode.h"
 
 #define INPUT_MAX 3
 
 // global variable definition
-t_remote_ac_status ac_status;
+t_remote_ac_status *ac_status = NULL;
 UINT16 user_data[USER_DATA_SIZE];
 
 void input_number(int *val)
@@ -80,15 +80,24 @@ static INT8 decode_as_ac(char *file_name)
 
     BOOL need_control = TRUE;
 
+    if (ac_status == NULL) {
+        ac_status = (t_remote_ac_status *)malloc(sizeof(t_remote_ac_status));
+        if (ac_status == NULL) {
+            printf("failed to allocate memory for ac_status\n");
+            return IR_DECODE_FAILED;
+        }
+    }
+
     // init air conditioner status
-    ac_status.ac_display = 0;
-    ac_status.ac_sleep = 0;
-    ac_status.ac_timer = 0;
-    ac_status.ac_power = AC_POWER_ON;
-    ac_status.ac_mode = AC_MODE_COOL;
-    ac_status.ac_temp = AC_TEMP_20;
-    ac_status.ac_wind_dir = AC_SWING_ON;
-    ac_status.ac_wind_speed = AC_WS_AUTO;
+    ac_status->ac_display = 0;
+    ac_status->ac_sleep = 0;
+    ac_status->ac_timer = 0;
+    ac_status->ac_power = AC_POWER_ON;
+    ac_status->ac_mode = AC_MODE_COOL;
+    ac_status->ac_temp = AC_TEMP_20;
+    ac_status->ac_wind_dir = AC_SWING_ON;
+    ac_status->ac_wind_speed = AC_WS_AUTO;
+    ac_status->change_wind_direction = 0;
 
     if (IR_DECODE_FAILED == ir_file_open(REMOTE_CATEGORY_AC, 0, file_name))
     {
@@ -112,7 +121,7 @@ static INT8 decode_as_ac(char *file_name)
 
         op_match = TRUE;
         need_control = FALSE;
-        change_wind_dir = FALSE;
+        ac_status->change_wind_direction = 0;
 
         if (99 == key_code)
         {
@@ -132,9 +141,9 @@ static INT8 decode_as_ac(char *file_name)
         }
         else if (15 == key_code)
         {
-            if (IR_DECODE_SUCCEEDED == get_supported_wind_speed(ac_status.ac_mode, &supported_speed))
+            if (IR_DECODE_SUCCEEDED == get_supported_wind_speed(ac_status->ac_mode, &supported_speed))
             {
-                printf("supported wind speed in %d = %02X\n", ac_status.ac_mode, supported_speed);
+                printf("supported wind speed in %d = %02X\n", ac_status->ac_mode, supported_speed);
             }
             else
             {
@@ -143,10 +152,10 @@ static INT8 decode_as_ac(char *file_name)
         }
         else if (16 == key_code)
         {
-            if (IR_DECODE_SUCCEEDED == get_temperature_range(ac_status.ac_mode, &min_temperature, &max_temperature))
+            if (IR_DECODE_SUCCEEDED == get_temperature_range(ac_status->ac_mode, &min_temperature, &max_temperature))
             {
                 printf("supported temperature range in mode %d = %d, %d\n",
-                          ac_status.ac_mode, min_temperature, max_temperature);
+                          ac_status->ac_mode, min_temperature, max_temperature);
             }
             else
             {
@@ -170,42 +179,43 @@ static INT8 decode_as_ac(char *file_name)
             {
                 // notice: only if ac_power is turned on will user_data change when input a different key_code
                 case 0:
-                    ac_status.ac_power = ((ac_status.ac_power == AC_POWER_ON) ? AC_POWER_OFF : AC_POWER_ON);
+                    ac_status->ac_power = ((ac_status->ac_power == AC_POWER_ON) ? AC_POWER_OFF : AC_POWER_ON);
                     need_control = TRUE;
                     break;
 
                 case 1:
-                    ++ac_status.ac_mode;
-                    ac_status.ac_mode = ac_status.ac_mode % AC_MODE_MAX;
+                    ++ac_status->ac_mode;
+                    ac_status->ac_mode = ac_status->ac_mode % AC_MODE_MAX;
                     need_control = TRUE;
                     break;
 
                 case 2:
                 case 7:
-                    ac_status.ac_temp = ((ac_status.ac_temp == AC_TEMP_30) ? AC_TEMP_30 : (ac_status.ac_temp + 1));
+                    ac_status->ac_temp = ((ac_status->ac_temp == AC_TEMP_30) ? AC_TEMP_30 : (ac_status->ac_temp + 1));
                     need_control = TRUE;
                     break;
 
                 case 3:
                 case 8:
-                    ac_status.ac_temp = ((ac_status.ac_temp == AC_TEMP_16) ? AC_TEMP_16 : (ac_status.ac_temp - 1));
+                    ac_status->ac_temp = ((ac_status->ac_temp == AC_TEMP_16) ? AC_TEMP_16 : (ac_status->ac_temp - 1));
                     need_control = TRUE;
                     break;
 
                 case 9:
-                    ++ac_status.ac_wind_speed;
-                    ac_status.ac_wind_speed = ac_status.ac_wind_speed % AC_WS_MAX;
+                    ++ac_status->ac_wind_speed;
+                    ac_status->ac_wind_speed = ac_status->ac_wind_speed % AC_WS_MAX;
                     need_control = TRUE;
                     break;
 
                 case 10:
-                    ac_status.ac_wind_dir = ((ac_status.ac_wind_dir == AC_SWING_ON) ? AC_SWING_OFF : AC_SWING_ON);
+                    ac_status->ac_wind_dir = ((ac_status->ac_wind_dir == AC_SWING_ON) ? AC_SWING_OFF : AC_SWING_ON);
                     need_control = TRUE;
                     break;
 
                 case 11:
-                    if (ac_status.ac_wind_dir == AC_SWING_OFF) {
-                        change_wind_dir = TRUE;
+                    if (ac_status->ac_wind_dir == AC_SWING_OFF) {
+                        ac_status->change_wind_direction = 1;
+
                     }
                     need_control = TRUE;
                     break;
@@ -218,13 +228,13 @@ static INT8 decode_as_ac(char *file_name)
             if (TRUE == op_match && TRUE == need_control)
             {
                 printf("switch AC to power = %d, mode = %d, temp = %d, speed = %d, swing = %d with key_code = %d\n",
-                       ac_status.ac_power,
-                       ac_status.ac_mode,
-                       ac_status.ac_temp,
-                       ac_status.ac_wind_speed,
-                       ac_status.ac_wind_dir,
+                       ac_status->ac_power,
+                       ac_status->ac_mode,
+                       ac_status->ac_temp,
+                       ac_status->ac_wind_speed,
+                       ac_status->ac_wind_dir,
                        key_code);
-                length = ir_decode(key_code, user_data, &ac_status, change_wind_dir);
+                length = ir_decode(key_code, user_data, ac_status);
                 printf("\n === binary decoded : %d\n", length);
                 for (index = 0; index < length; index++)
                 {
@@ -273,7 +283,7 @@ static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
         {
             break;
         }
-        length = ir_decode(key_code, user_data, NULL, 0);
+        length = ir_decode(key_code, user_data, NULL);
         printf("\n === binary decoded : %d\n", length);
         for (index = 0; index < length; index++)
         {
@@ -285,6 +295,13 @@ static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
 
     ir_close();
     return IR_DECODE_SUCCEEDED;
+}
+
+void cleanup() {
+    if (ac_status != NULL) {
+        free(ac_status);
+        ac_status = NULL;
+    }
 }
 
 static void print_usage(const char *progn) {
@@ -324,4 +341,7 @@ int main(int argc, char *argv[])
             printf("decode functionality not supported : %c\n", function);
             break;
     }
+    
+    cleanup();
+    return 0;
 }
