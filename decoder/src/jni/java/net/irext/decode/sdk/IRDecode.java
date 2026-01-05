@@ -147,6 +147,9 @@ public class IRDecode {
                 acStatus.getAcWindDir() > Constants.ACSwing.SWING_OFF.getValue()) {
             return false;
         }
+        if (acStatus.getChangeWindDir() != 0 && acStatus.getChangeWindDir() != 1) {
+            return false;
+        }
         return true;
     }
 }

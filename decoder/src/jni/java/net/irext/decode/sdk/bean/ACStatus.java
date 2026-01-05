@@ -24,6 +24,7 @@ public class ACStatus {
     private int acDisplay;
     private int acSleep;
     private int acTimer;
+    private int changeWindDir;
 
     public ACStatus() {
         this.acPower = Constants.ACPower.POWER_OFF.getValue();
@@ -34,10 +35,11 @@ public class ACStatus {
         this.acTimer = 0;
         this.acDisplay = 0;
         this.acSleep = 0;
+        this.changeWindDir = 0;
     }
 
     public ACStatus(int acPower, int acMode, int acTemp, int acWindSpeed, int acWindDir,
-                    int acDisplay, int acSleep, int acTimer) {
+                    int acDisplay, int acSleep, int acTimer, int changeWindDir) {
         this.acPower = acPower;
         this.acTemp = acTemp;
         this.acMode = acMode;
@@ -46,6 +48,7 @@ public class ACStatus {
         this.acDisplay = acDisplay;
         this.acSleep = acSleep;
         this.acTimer = acTimer;
+        this.changeWindDir = changeWindDir;
     }
 
     public int getAcPower() {
@@ -112,4 +115,11 @@ public class ACStatus {
         this.acTimer = acTimer;
     }
 
+    public int getChangeWindDir() {
+        return changeWindDir;
+    }
+
+    public void setChangeWindDir(int changeWindDir) {
+        this.changeWindDir = changeWindDir;
+    }
 }
