@@ -2,9 +2,14 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS    := -DBOARD_ANDROID
 LOCAL_MODULE    := libirdecode
-LOCAL_SRC_FILES := ./jni/src/ir_decode_jni.c \
+
+LOCAL_CFLAGS    := -DBOARD_ANDROID
+
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/src/jni/include \
+                    $(LOCAL_PATH)/src/include
+
+LOCAL_SRC_FILES := ./src/jni/src/ir_decode_jni.c \
                    ./src/ir_decode.c \
                    ./src/ir_tv_control.c \
                    ./src/ir_ac_apply.c \
