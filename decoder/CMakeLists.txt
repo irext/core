@@ -50,9 +50,9 @@ set(BIN_TEST_SRC
 # SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
 
 ## ARM64 cross compile
-SET(CMAKE_C_COMPILER "/usr/bin/aarch64-linux-gnu-gcc")
-SET(CMAKE_CXX_COMPILER "/usr/bin/aarch64-linux-gnu-g++")
-SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
+# SET(CMAKE_C_COMPILER "/usr/bin/aarch64-linux-gnu-gcc")
+# SET(CMAKE_CXX_COMPILER "/usr/bin/aarch64-linux-gnu-g++")
+# SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
 
 add_library(irdecode SHARED
         ${LIB_IRDECODE_SRC})
