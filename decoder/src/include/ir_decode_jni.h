@@ -2,7 +2,7 @@
 #if defined BOARD_ANDROID
 #include <jni.h>
 #elif (defined BOARD_PC) && (defined BOARD_PC_JNI)
-#include "./include/jni.h"
+#include "include/jni.h"
 #endif
 /* Header for class net_irext_decode_sdk_IRDecode */
 

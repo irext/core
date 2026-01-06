@@ -31,25 +31,28 @@ set(LIB_IRDECODE_SRC
         src/ir_decode.c
         src/ir_decode_test.c)
 
+set(LIB_JNI_SRC
+        src/ir_decode_jni.c)
+
 set(BIN_TEST_SRC
         src/ir_decode.c)
 
 # SET(CMAKE_SYSTEM_NAME Linux)
+
 ## ARMv7hf cross compile
 # SET(CMAKE_C_COMPILER "/usr/bin/arm-linux-gnueabihf-gcc")
 # SET(CMAKE_CXX_COMPILER "/usr/bin/arm-linux-gnueabihf-g++")
 # SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
 
-# SET(CMAKE_SYSTEM_NAME Linux)
 ## ARMv7el cross compile
 # SET(CMAKE_C_COMPILER "/usr/bin/arm-linux-gnueabi-gcc")
 # SET(CMAKE_CXX_COMPILER "/usr/bin/arm-linux-gnueabi-g++")
 # SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
 
 ## ARM64 cross compile
-# SET(CMAKE_C_COMPILER "/usr/bin/aarch64-linux-gnu-gcc")
-# SET(CMAKE_CXX_COMPILER "/usr/bin/aarch64-linux-gnu-g++")
-# SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
+SET(CMAKE_C_COMPILER "/usr/bin/aarch64-linux-gnu-gcc")
+SET(CMAKE_CXX_COMPILER "/usr/bin/aarch64-linux-gnu-g++")
+SET(CMAKE_FIND_ROOT_PATH "/usr/bin")
 
 add_library(irdecode SHARED
         ${LIB_IRDECODE_SRC})
@@ -60,16 +63,26 @@ target_compile_options(irdecode PRIVATE
 add_library(irdecode_s STATIC
         ${LIB_IRDECODE_SRC})
 
-target_compile_options(irdecode_s PRIVATE
+target_compile_definitions(irdecode_s PRIVATE
         -DBOARD_PC)
 
 target_compile_options(irdecode_s PRIVATE
         -fPIC)
 
+add_library(irdecode_jni SHARED
+        ${LIB_IRDECODE_SRC}
+        ${LIB_JNI_SRC})
+
+target_include_directories(irdecode_jni PRIVATE
+        "${CMAKE_SOURCE_DIR}/src/jni")
+
+target_compile_definitions(irdecode_jni PRIVATE
+        -DBOARD_PC
+        -DBOARD_PC_JNI)
+
 add_executable(irdecode_test
+        ${LIB_IRDECODE_SRC}
         ${BIN_TEST_SRC})
 
-target_link_libraries(irdecode_test PRIVATE
-        irdecode)
-
-add_subdirectory("src/jni")
+target_compile_definitions(irdecode_test PRIVATE
+        -DBOARD_PC)
