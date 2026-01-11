@@ -51,6 +51,7 @@ public class IRDecode {
         System.out.println("loading decode library " + libPath);
         System.load(libPath);
     }
+
     public String getVersion() {
         return irGetVersion();
     }
