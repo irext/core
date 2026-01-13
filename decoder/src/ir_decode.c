@@ -791,6 +791,13 @@ UINT16 ir_decode_combo(const UINT8 category, const UINT8 sub_category,
         return IR_DECODE_FAILED;
     }
 
+    if (sub_category < SUB_CATEGORY_QUATERNARY ||
+        sub_category >= SUB_CATEGORY_NEXT)
+    {
+        ir_printf("wrong remote sub category : %d\n", sub_category);
+        return IR_DECODE_FAILED;
+    }
+
     remote_category = (t_remote_category) category;
 
     if (key_code < 0 || key_code >= KEY_CODE_MAX[remote_category])

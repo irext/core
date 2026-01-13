@@ -249,7 +249,15 @@ static void print_ir_time(t_ir_data *data, UINT8 key_index, UINT16 *ir_time)
                     }
                     else if (ir_level == IRDA_LEVEL_LOW)
                     {
+                        if (time_index + 1 > USER_DATA_SIZE) {
+                            ir_printf("time index exceeded\n");
+                            return;
+                        }
                         ir_time[time_index++] = pcycles->mask;
+                    }
+                    if (time_index + 1 > USER_DATA_SIZE) {
+                        ir_printf("time index exceeded\n");
+                        return;
                     }
                     ir_time[time_index++] = pcycles->space;
                     ir_level = IRDA_LEVEL_LOW;
@@ -263,7 +271,15 @@ static void print_ir_time(t_ir_data *data, UINT8 key_index, UINT16 *ir_time)
                     }
                     else if (ir_level == IRDA_LEVEL_HIGH)
                     {
+                        if (time_index + 1 > USER_DATA_SIZE) {
+                            ir_printf("time index exceeded\n");
+                            return;
+                        }
                         ir_time[time_index++] = pcycles->space;
+                    }
+                    if (time_index + 1 > USER_DATA_SIZE) {
+                        ir_printf("time index exceeded\n");
+                        return;
                     }
                     ir_time[time_index++] = pcycles->mask;
                     ir_level = IRDA_LEVEL_HIGH;
@@ -278,6 +294,10 @@ static void print_ir_time(t_ir_data *data, UINT8 key_index, UINT16 *ir_time)
                 }
                 else if (ir_level == IRDA_LEVEL_HIGH)
                 {
+                    if (time_index + 1 > USER_DATA_SIZE) {
+                        ir_printf("time index exceeded\n");
+                        return;
+                    }
                     ir_time[time_index++] = pcycles->space;
                 }
                 ir_level = IRDA_LEVEL_LOW;
@@ -291,6 +311,10 @@ static void print_ir_time(t_ir_data *data, UINT8 key_index, UINT16 *ir_time)
                 }
                 else if (ir_level == IRDA_LEVEL_LOW)
                 {
+                    if (time_index + 1 > USER_DATA_SIZE) {
+                        ir_printf("time index exceeded\n");
+                        return;
+                    }
                     ir_time[time_index++] = pcycles->mask;
                 }
                 ir_level = IRDA_LEVEL_HIGH;

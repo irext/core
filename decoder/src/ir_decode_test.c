@@ -69,6 +69,7 @@ static INT8 decode_as_ac(char *file_name)
     int first_time = 1;
     int length = 0;
     int index = 0;
+    INT8 ret_val = IR_DECODE_SUCCEEDED;
 
     // get status
     UINT8 supported_mode = 0x00;
@@ -101,8 +102,8 @@ static INT8 decode_as_ac(char *file_name)
 
     if (IR_DECODE_FAILED == ir_file_open(REMOTE_CATEGORY_AC, 0, file_name))
     {
-        ir_close();
-        return IR_DECODE_FAILED;
+        ret_val = IR_DECODE_FAILED;
+        goto _exit;
     }
 
     do
@@ -246,9 +247,14 @@ static INT8 decode_as_ac(char *file_name)
         }
     } while (TRUE);
 
+_exit:
     ir_close();
 
-    return IR_DECODE_SUCCEEDED;
+    if (NULL != ac_status) {
+        free(ac_status);
+    }
+
+    return ret_val;
 }
 
 static INT8 decode_as_tv(char *file_name, UINT8 ir_hex_encode)
