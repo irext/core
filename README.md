@@ -2,7 +2,7 @@
 
   This project contains IRext core encode algorithm and decode algorithm.
 
-### Summary
+### Overview
 
   IR code is base on 38000Hz or 56000Hz carrier waves, it is identified by the time interval of carrier waves.
 
@@ -28,7 +28,7 @@ Following are some specifications:
 - Command code: The receiver receives IR code as commands from emitter, and then adjusts status of itself, eg. control code of TV, DVD.
 - Status code: The receiver receives IR code as status, and applies itself to this status, eg. control code of air conditioner.
 
-### Encoder
+### The IR Encoder
 
   The encoder composes compressed remote control IR binaries from plain text in XML format. Different kind of remote control code are differently composed.
 
@@ -40,7 +40,7 @@ __Status code__
 
   Status code is defined by various kinds of tags, indication each essential part in one status control frame. It is especially used for air conditioners.
 
-### Decoder
+### The IR Decoder
 
   The decoder decodes IR remote control binaries into IR control frame which is composed by time series illustrated above.
 
