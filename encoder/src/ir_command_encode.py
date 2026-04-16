@@ -3,6 +3,8 @@
 #
 # created by strawmanbobi 2016-11-10
 
+from __future__ import print_function
+
 import sys
 import xml.dom.minidom
 import struct
@@ -86,7 +88,11 @@ def print_remote(input_file, real_path, real_name, category):
     filename = real_name.split('.')
 
     binary = open(real_path + "/" + protocol + "#" + filename[0] + ".bin", 'wb')
-    tag = struct.pack('4s', b'irda')
+    # Compatible with Python 2 and 3
+    try:
+        tag = struct.pack('4s', b'irda')
+    except TypeError:
+        tag = struct.pack('4s', 'irda')
     binary.write(tag)
 
     print(protocol)

@@ -3,6 +3,8 @@
 #
 # created by strawmanbobi 2016-11-10
 
+from __future__ import print_function
+
 import sys
 import os
 
