@@ -30,7 +30,7 @@ class ACTag:
         return self.tag < other.tag
 
     def printf(self):
-        print "[%d] %s len:%d" % (self.tag, self.value, len(self.value))
+        print("[%d] %s len:%d" % (self.tag, self.value, len(self.value)))
 
 # Definition of Remote_control class
 # device id:(tag:value)...(tag:value)
@@ -48,7 +48,7 @@ class ACRemoteControl:
         self.tags.sort()
 
     def printf(self):
-        print "==========Device id:%d===========" % self.device_id
+        print("==========Device id:%d===========" % self.device_id)
         for j in range(len(self.tags)):
             self.tags[j].printf()
 
@@ -88,15 +88,15 @@ dom = xml.dom.minidom.parse(sys.argv[1])
 device = dom.documentElement
 # devices = root.getElementsByTagName('remote_controller')
 
-print "============================"
-print "AC data:"
-print "============================"
+print("============================")
+print("AC data:")
+print("============================")
 ac_device_arrary=[]
 id = device.getElementsByTagName('id')
 idnum = int(id[0].firstChild.data.encode('ascii'), 10)
 
 g_ac_device = ACRemoteControl(idnum)
-print "------------AC Device ID: %d-------------" % idnum
+print("------------AC Device ID: %d-------------" % idnum)
 exts = device.getElementsByTagName('exts')
 for n in range(len(exts)):
     ext = exts[n].getElementsByTagName('ext')

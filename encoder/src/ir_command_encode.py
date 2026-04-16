@@ -61,7 +61,7 @@ class CKeyMap:
         self.value = value
 
     def print_info(self):
-        print self.name, self.value
+        print(self.name, self.value)
 
     def pack_key(self, output_file):
         for i in range(len(self.value)):
@@ -73,11 +73,11 @@ class CKeyMap:
 
     def pack_length(self, output_file):
         output_file.write(struct.pack('B', len(self.value)))
-        print len(self.value)
+        print(len(self.value))
 
 
 def print_remote(input_file, real_path, real_name, category):
-    print input_file
+    print(input_file)
     dom = xml.dom.minidom.parse(input_file)
     root = dom.documentElement
     protocol_node = root.getElementsByTagName('protocol')
@@ -86,10 +86,10 @@ def print_remote(input_file, real_path, real_name, category):
     filename = real_name.split('.')
 
     binary = open(real_path + "/" + protocol + "#" + filename[0] + ".bin", 'wb')
-    tag = struct.pack('4s', 'irda')
+    tag = struct.pack('4s', b'irda')
     binary.write(tag)
 
-    print protocol
+    print(protocol)
     keymap = root.getElementsByTagName('key-map')
     key = []
     empty_value = []
@@ -110,13 +110,13 @@ def print_remote(input_file, real_path, real_name, category):
         empty_key = CKeyMap(keymap_dicts[int(category)][j], empty_value)
         find = 0
         for n in range(len(key)):
-            if cmp(keymap_dicts[int(category)][j], key[n].name) == 0:
+            if keymap_dicts[int(category)][j] == key[n].name:
                 key[n].print_info()
                 key[n].pack_key(binary)
                 find = 1
                 break
         if find == 0:
-            print "Don't file this key %s" % (keymap_dicts[int(category)][j])
+            print("Don't file this key %s" % (keymap_dicts[int(category)][j]))
             empty_key.pack_key(binary)
 
 fileName = sys.argv[1]
@@ -124,5 +124,5 @@ realName = sys.argv[2]
 realPath = sys.argv[3]
 inCategory = sys.argv[4]
 fileType = fileName.split('.')
-if cmp(fileType[1], "xml") == 0:
+if fileType[1] == "xml":
     print_remote(fileName, realPath, realName, inCategory)

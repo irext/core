@@ -18,7 +18,7 @@ class IRDAData:
         self.index = index
 
     def printf(self):
-        print "%d %d %d %d" % (self.bits, self.lsb, self.mode, self.index)
+        print("%d %d %d %d" % (self.bits, self.lsb, self.mode, self.index))
 
     def packIRData(self):
         return struct.pack("BBBB", self.bits, self.lsb, self.mode, self.index)
@@ -30,14 +30,14 @@ class IRDAFlag:
         self.space = space
 
     def printf(self):
-        print "%s %d %d" % (self.name, self.mask, self.space)
+        print("%s %d %d" % (self.name, self.mask, self.space))
 
     def packFlag(self):
         return struct.pack("HH", self.mask, self.space)
 
 
 def printProtocol(file):
-    print file
+    print(file)
     dom = xml.dom.minidom.parse(file)
     root = dom.documentElement
     freqnode = root.getElementsByTagName('frequency')
@@ -46,13 +46,13 @@ def printProtocol(file):
 
     protnode = root.getAttribute('name')
 
-    print protnode
+    print(protnode)
     protname = protnode.split('_')
 
     binary = open(sys.argv[2], 'wb')
 
-    bytes = struct.pack('20s', protnode.encode("ascii"))
-    binary.write(bytes)
+    bytes_data = struct.pack('20s', protnode.encode("ascii"))
+    binary.write(bytes_data)
 
     bit = root.getElementsByTagName('bit')
     for n in range(len(flag_tab)):
@@ -60,35 +60,35 @@ def printProtocol(file):
             name = bit[b].getAttribute('name')
             cycles = bit[b].getAttribute('cycles')
             if name and cycles:
-                if cmp(flag_tab[n], name) == 0:
-                    bytes = struct.pack('B', int(cycles))
-                    binary.write(bytes)
+                if flag_tab[n] == name:
+                    bytes_data = struct.pack('B', int(cycles))
+                    binary.write(bytes_data)
                     break
         if b == (len(bit) - 1):
-            bytes = struct.pack('B', 0)
-            binary.write(bytes)
+            bytes_data = struct.pack('B', 0)
+            binary.write(bytes_data)
     for m in range(len(flag_tab)):
         found = 0
         for i in range(len(bit)):
             name = bit[i].getAttribute('name')
             cycles = bit[i].getAttribute('cycles')
-            if name and cycles and cmp(flag_tab[m], name) == 0:
+            if name and cycles and flag_tab[m] == name:
                 found = 1
                 cycle = bit[i].getElementsByTagName('cycle')
                 for c in range(len(cycle)):
                     normal = cycle[c].getAttribute('flag')
                     mask = cycle[c].getAttribute('mask')
                     space = cycle[c].getAttribute('space')
-                    if cmp(normal, "normal") == 0:
+                    if normal == "normal":
                         inverseflag = 0
                     else:
                         inverseflag = 1
-                    print "{\"%s\", \"cycle:%s\", 0x%04x, 0x%04x, 0x%02x}" % (
-                        name, c, int(mask), int(space), int(cycles))
-                    bytes = struct.pack('B', inverseflag)
-                    binary.write(bytes)
-                    bytes = struct.pack('HH', int(mask), int(space))
-                    binary.write(bytes)
+                    print("{\"%s\", \"cycle:%s\", 0x%04x, 0x%04x, 0x%02x}" % (
+                        name, c, int(mask), int(space), int(cycles)))
+                    bytes_data = struct.pack('B', inverseflag)
+                    binary.write(bytes_data)
+                    bytes_data = struct.pack('HH', int(mask), int(space))
+                    binary.write(bytes_data)
 
     frame = root.getElementsByTagName('frame')
 
@@ -104,22 +104,22 @@ def printProtocol(file):
         if i.nodeType == i.ELEMENT_NODE:
             index += 1
             if i.getAttribute('type'):
-                print "{%d, \"%s\", 0, 0, 0}" % (index, i.getAttribute('type'))
-                flag = IRDAData(1, 0, 0, flag_tab_dict[i.getAttribute('type').encode("ascii")])
+                print("{%d, \"%s\", 0, 0, 0}" % (index, i.getAttribute('type')))
+                flag = IRDAData(1, 0, 0, flag_tab_dict[i.getAttribute('type')])
                 irda_frame.append(flag)
             if i.getAttribute('bits'):
-                if cmp(i.getAttribute('ending'), "lsb") == 0:
+                if i.getAttribute('ending') == "lsb":
                     lsb = 0
                 else:
                     lsb = 1
 
-                if cmp(i.getAttribute('mode'), "normal") == 0:
+                if i.getAttribute('mode') == "normal":
                     mode = 0
                 else:
                     mode = 1
 
-                print "{%d, \"%s\", %d, %d, %s}" % (index, i.getAttribute('bits'),
-                                                    lsb, mode, i.firstChild.data)
+                print("{%d, \"%s\", %d, %d, %s}" % (index, i.getAttribute('bits'),
+                                                    lsb, mode, i.firstChild.data))
                 flag = IRDAData(int(i.getAttribute('bits')), lsb, mode, int(i.firstChild.data))
                 irda_frame.append(flag)
 

@@ -9,18 +9,18 @@ import os
 for root, dirs, files in os.walk(sys.argv[1]):
     for i in files:
         fileType = i.split('.')
-        if cmp(fileType[1], 'bin') == 0:
-            print root + i
+        if fileType[1] == 'bin':
+            print(root + i)
 
-            print "========================list==========================="
+            print("========================list===========================")
 
             remotePath = sys.argv[2]
             fileType2 = remotePath.split('.')
-            if cmp(fileType2[-1], 'bin') == 0:
+            if fileType2[-1] == 'bin':
                 protocolType = fileType2[0].split('#')
                 print(protocolType[0])
                 print(fileType[0])
-                if cmp(protocolType[0].split('/')[-1], fileType[0]) == 0:
+                if protocolType[0].split('/')[-1] == fileType[0]:
                     outName = remotePath.split('#')
                     binary = open(sys.argv[3] + "/irda_" + outName[0].split('/')[-1] + "_" + outName[1], 'wb')
                     prot_file = open(root + i, "rb")
@@ -30,4 +30,4 @@ for root, dirs, files in os.walk(sys.argv[1]):
                     binary.close()
                     prot_file.close()
                     remote_file.close()
-                    print remotePath
+                    print(remotePath)
