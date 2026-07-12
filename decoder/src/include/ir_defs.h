@@ -12,7 +12,7 @@ Revision log:
 #ifndef _IR_DEFS_H
 #define _IR_DEFS_H
 
-#define IR_DECODE_LIB_VER "1.5.2"
+#define IR_DECODE_LIB_VER "1.5.3"
 
 #define DEBUG  (1)
 
