@@ -6,6 +6,8 @@ LOCAL_MODULE := libirdecode
 
 LOCAL_CFLAGS := -DBOARD_ANDROID
 
+LOCAL_LDFLAGS += -Wl,-z,max-page-size=16384
+
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/src/include
 
 LOCAL_SRC_FILES := ./src/ir_decode_jni.c \
