@@ -10,6 +10,7 @@ IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Android")
     MESSAGE("compile platform : Android")
     add_definitions(-DPLATFORM_LINUX)
+    set(ANDROID_PAGE_ALIGN_FLAGS "-Wl,-z,max-page-size=16384")
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     MESSAGE("compile platform : win32")
     add_definitions(-DPLATFORM_WIN32)
@@ -82,6 +83,11 @@ target_include_directories(irdecode_jni PRIVATE
 target_compile_definitions(irdecode_jni PRIVATE
         -DBOARD_PC
         -DBOARD_PC_JNI)
+
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
+    target_link_options(irdecode PRIVATE ${ANDROID_PAGE_ALIGN_FLAGS})
+    target_link_options(irdecode_jni PRIVATE ${ANDROID_PAGE_ALIGN_FLAGS})
+endif()
 
 add_executable(irdecode_test
         ${LIB_IRDECODE_SRC}
