@@ -54,7 +54,7 @@ typedef int BOOL;
 void noprint(const char *fmt, ...);
 
 #define ir_malloc(A) malloc(A)
-#define ir_free(A) free(A)
+#define ir_free(A) do { if ((A) != NULL) { free(A); (A) = NULL; } } while (0)
 
 #define ir_memcpy(A, B, C) memcpy(A, B, C)
 #define ir_memset(A, B, C) memset(A, B, C)
